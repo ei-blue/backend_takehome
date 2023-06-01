@@ -4,7 +4,9 @@ import pandas as pd
 
 app = Flask(__name__)
 
-def etl():
+# Define ETL functions
+
+def extract():
     # Load CSV files and clean the dataframe
     # load users.csv file
     users_df = pd.read_csv("./data/users.csv")
@@ -21,6 +23,9 @@ def etl():
     compounds_df.columns = compounds_df.columns.str.replace("\t", "")
     compounds_df[["compound_name", "compound_structure"]] = compounds_df[["compound_name", "compound_structure"]].apply(lambda x: x.str.replace('\t', ''))
 
+    return users_df, user_experiments_df, compounds_df
+
+def transform(users_df, user_experiments_df, compounds_df): 
     # Process files to derive features
     # caluculate total experiments for each user
     total_experiments = user_experiments_df.groupby('user_id').size().reset_index(name='total_experiments')
@@ -31,7 +36,9 @@ def etl():
     # calcurate user's most commonly experimented compound
     compound_counts = user_experiments_df['experiment_compound_ids'].str.split(';').explode().value_counts()
     most_common_compound = compounds_df[compounds_df['compound_id'] == int(compound_counts.idxmax())]
+    return total_experiments, average_experiments, most_common_compound
 
+def load(total_experiments, average_experiments, most_common_compound):
     # Upload processed data into a database
     
     # Connect to Postgres database
@@ -71,7 +78,6 @@ def etl():
         average = float(average)
         compound_id = int(compound_id)
         
-
         cur.execute('''
             INSERT INTO user_features (
                 user_id,
@@ -88,12 +94,13 @@ def etl():
     cur.close()
     conn.close()
     
-    
-    
 # Your API that can be called to trigger your ETL process
 def trigger_etl():
     # Trigger your ETL process here
-    etl()
+    # etl()
+    users_df, user_experiments_df, compounds_df = extract()
+    total_experiments, average_experiments, most_common_compound = transform(users_df, user_experiments_df, compounds_df)
+    load(total_experiments, average_experiments, most_common_compound)
     return {"message": "ETL process started"}, 200
 
 
