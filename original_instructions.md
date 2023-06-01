@@ -27,6 +27,7 @@ You will find three CSV files in the `data`  directory:
 
 - `user_experiments.csv`: Contains experiment data with the following columns: `experiment_id`, `user_id`, `experiment_compound_ids`, `experiment_run_time`. The `experiment_compound_ids` column contains a semicolon-separated list of compound IDs.
 
+
 - `compounds.csv`: Contains compound data with the following columns: `compound_id`, `compound_name`, `compound_structure`.
 
 
@@ -47,13 +48,8 @@ Please provide the following in a GITHUB REPOSITORY.
 
 
 Please also provide a script that builds, and runs the docker container. 
-<!-- docker build -t etl-app . -->
-<!-- docker run -p 8000:5000 etl-app -->
-<!-- if this doesn't work, change 8000 to diffretent numbers like 8888 -->
 You should also provide a script that scaffolds how a user can run the ETL process. This can be `curl` or something else.
-<!-- curl -X POST http://localhost:8000/etl -->
 Finally, provide a script that queries the database and showcases that it has been populated with the desired features.
-<!--  -->
 
 
 ## Evaluation

@@ -31,8 +31,9 @@ def etl():
     # calcurate 
     compound_counts = user_experiments_df['experiment_compound_ids'].str.split(';').explode().value_counts()
     most_common_compound = compounds_df[compounds_df['compound_id'] == int(compound_counts.idxmax())]
-    
+
     # Connect to Postgres database
+    # For container
     conn = psycopg2.connect(
         host='postgres',
         port=5432,
@@ -41,6 +42,15 @@ def etl():
         password='test_password'
     )
     cur = conn.cursor()
+    
+    # conn = psycopg2.connect(
+    # host='localhost',
+    # port=5432,
+    # dbname='test_database',
+    # user='test_user',
+    # password='test_password'
+    # )
+    # cur = conn.cursor()
     
     # create database table
     cur.execute('''
@@ -94,13 +104,46 @@ def trigger_etl():
     etl()
     return {"message": "ETL process started"}, 200
 
+
+def show_user_features():
+    # Connect to Postgres database
+    conn = psycopg2.connect(
+        host='postgres',
+        port=5432,
+        dbname='test_database',
+        user='test_user',
+        password='test_password'
+    )
+    cur = conn.cursor()
+    
+    # Check if the user_features table exists
+    cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'user_features')")
+    table_exists = cur.fetchone()[0]
+
+    if table_exists:
+        # Retrieve and fetch all rows from the user_features table
+        cur.execute('SELECT * FROM user_features')
+        rows = cur.fetchall()
+    else:
+        rows = []
+
+    cur.close()
+    conn.close()
+    
+    return rows
+
 @app.route('/')
 def hello():
-    return 'Hello, World!'
+    return 'This is an ETL application3'
 
 @app.route('/etl', methods=['POST'])
 def etl_route():
     return trigger_etl()
+
+@app.route('/database', methods=['POST'])
+def database_route():
+    rows = show_user_features()
+    return {'user_features': rows}, 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
