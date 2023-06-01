@@ -57,9 +57,7 @@ def load(total_experiments, average_experiments, most_common_compound):
             user_id INTEGER PRIMARY KEY,
             total_experiments INTEGER,
             average_experiments FLOAT,
-            most_common_compound_id INTEGER,
-            most_common_compound_name VARCHAR(255),
-            most_common_compound_structure VARCHAR(255)
+            most_common_compound_name VARCHAR(255)
         )
     ''')
 
@@ -68,26 +66,21 @@ def load(total_experiments, average_experiments, most_common_compound):
         user_id = row['user_id']
         experiments = row['total_experiments']
         average = average_experiments
-        compound_id = most_common_compound['compound_id'].values[0]
         compound_name = most_common_compound['compound_name'].values[0]
-        compound_structure = most_common_compound['compound_structure'].values[0]
 
         # Convert numpy.int64 values to native Python integers
         user_id = int(user_id)
         experiments = int(experiments)
         average = float(average)
-        compound_id = int(compound_id)
         
         cur.execute('''
             INSERT INTO user_features (
                 user_id,
                 total_experiments,
                 average_experiments,
-                most_common_compound_id,
-                most_common_compound_name,
-                most_common_compound_structure
-            ) VALUES (%s, %s, %s, %s, %s, %s)
-        ''', (user_id, experiments, average, compound_id, compound_name, compound_structure))
+                most_common_compound_name
+            ) VALUES (%s, %s, %s, %s)
+        ''', (user_id, experiments, average, compound_name))
 
     # Commit the changes and close the connection
     conn.commit()
