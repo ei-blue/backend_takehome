@@ -23,13 +23,16 @@ Before running the application, make sure you have the following installed on yo
 
 ## Build and Run the Application
 1. Clone the repository and navigate to the project directory:
+```bash
+git clone https://github.com/ei-blue/backend_takehome.git
 
-`git clone https://github.com/ei-blue/backend_takehome.git`
-
-`cd backend_takehome`
+cd backend_takehome
+```
 
 2. Build and run the Docker containers:
-`docker-compose up`
+```bash
+docker-compose up
+```
 
 The application will be accessible at http://localhost:8000.
 
@@ -39,7 +42,9 @@ To verify the state of the database, you can make an HTTP POST request using any
 
 ### Check the Database Before ETL
 You can use the following command to check if the database is empty before running the ETL process:
-`curl -X POST http://localhost:8000/database`
+```bash
+curl -X POST http://localhost:8000/database
+```
 
 This should return the response: `{"user_features":[]}`, indicating that the database is currently empty.
 
@@ -48,7 +53,9 @@ To trigger the ETL process, you can make an HTTP POST request to the designated 
 
 ### Trigger the ETL Process Using curl
 You can use curl to trigger the ETL process by running the following command:
-`curl -X POST http://localhost:8000/etl`
+```bash
+curl -X POST http://localhost:8000/etl
+```
 
 This will initiate the ETL process.
 
@@ -57,7 +64,9 @@ After the ETL process has been triggered and completed, you can query the popula
 
 ### Check the Database After ETL
 To view the populated database content, you can use the following command:
-`curl -X POST http://localhost:8000/database`
+```bash
+curl -X POST http://localhost:8000/database
+```
 
 This will return the response containing the populated user_features table data.
 

@@ -1,9 +1,7 @@
 FROM postgres:latest
 
-# Set environment variables for PostgreSQL
 ENV POSTGRES_USER=test_user
 ENV POSTGRES_PASSWORD=test_password
 ENV POSTGRES_DB=test_database
 
-# Expose the default PostgreSQL port
 EXPOSE 5432

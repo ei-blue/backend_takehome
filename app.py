@@ -28,12 +28,13 @@ def etl():
     # calculate average experiments per user
     average_experiments = user_experiments_df.groupby('user_id').size().mean()
 
-    # calcurate 
+    # calcurate user's most commonly experimented compound
     compound_counts = user_experiments_df['experiment_compound_ids'].str.split(';').explode().value_counts()
     most_common_compound = compounds_df[compounds_df['compound_id'] == int(compound_counts.idxmax())]
 
+    # Upload processed data into a database
+    
     # Connect to Postgres database
-    # For container
     conn = psycopg2.connect(
         host='postgres',
         port=5432,
@@ -42,15 +43,6 @@ def etl():
         password='test_password'
     )
     cur = conn.cursor()
-    
-    # conn = psycopg2.connect(
-    # host='localhost',
-    # port=5432,
-    # dbname='test_database',
-    # user='test_user',
-    # password='test_password'
-    # )
-    # cur = conn.cursor()
     
     # create database table
     cur.execute('''
@@ -96,7 +88,7 @@ def etl():
     cur.close()
     conn.close()
     
-    # Upload processed data into a database
+    
     
 # Your API that can be called to trigger your ETL process
 def trigger_etl():
@@ -121,7 +113,6 @@ def show_user_features():
     table_exists = cur.fetchone()[0]
 
     if table_exists:
-        # Retrieve and fetch all rows from the user_features table
         cur.execute('SELECT * FROM user_features')
         rows = cur.fetchall()
     else:
@@ -133,8 +124,8 @@ def show_user_features():
     return rows
 
 @app.route('/')
-def hello():
-    return 'This is an ETL application3'
+def index():
+    return 'This is an ETL application'
 
 @app.route('/etl', methods=['POST'])
 def etl_route():

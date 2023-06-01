@@ -1,4 +1,3 @@
-# Install Python image
 FROM python:3.7
 
 WORKDIR /app
